@@ -1,8 +1,32 @@
 import pandas as pd
 import sklearn as sk
 import matplotlib.pyplot as plt
+import numpy as np
 
 MAX_VAL = 7
+
+
+def plotDeathsByMonth(df, min_year=2012, max_year=2018):
+    if min_year < 2012:
+        min_year = 2012
+    if max_year > 2018:
+        max_year = 2018
+
+    months = np.arange(1, 13)
+    dates = pd.to_datetime(df['Date'])
+    death_by_years = {}
+    for year in np.arange(min_year, max_year + 1):
+        death_by_month = []
+        for month in months:
+            death_by_month.append(dates.where((dates.dt.month == month) & (dates.dt.year == year)).dropna().size)
+        death_by_years[year] = death_by_month
+
+    for key, value in death_by_years.items():
+        plt.plot(months, value, label=str(key))
+    plt.legend()
+    plt.title("Morts par overdose en fonction du mois entre " + str(min_year) + " et " + str(max_year))
+    plt.show()
+
 
 def plotYearOnDeath(df):
     hist = df['Age']
